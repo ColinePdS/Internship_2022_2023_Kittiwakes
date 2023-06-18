@@ -1,0 +1,43 @@
+#!/bin/bash
+#PBS -q omp
+#PBS -l ncpus=2
+#PBS -l mem=15g 
+#PBS -l walltime=30:00:00
+
+cd $PBS_O_WORKDIR
+qstat -f $PBS_JOBID
+
+# Here we source bash SHELL
+source /usr/share/Modules/3.2.10/init/bash
+
+# clean modules
+module purge
+
+# load R version (user may load another using $ module avail)
+module load R/3.6.3-intel-cc-17.0.2.174
+
+# load latest conda version
+module load conda/latest
+
+# print list of module loaded
+module list
+
+# here you need to modify the path according to your conda environment
+# to check where it is located type the following command in a terminal
+# - if your not in bash
+# $ source /usr/share/Modules/3.2.10/init/bash
+#
+# - find the path to your conda environment
+# $ module load conda/latest
+# $ conda info --env
+#
+# for example the usual conda R environment on datarmor is R-new
+# $ conda info --envs | grep R-new
+# R-new                    /appli/conda-env/3.6/R-new
+#
+# to load this conda environment in pbs or bash terminal
+# $ source activate /appli/conda-env/3.6/R-new
+#
+source activate $HOME/.conda/envs/nimble
+time Rscript pjrepo-an-V14_7.r >& logfile_anV14_7
+echo "main done"
